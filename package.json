@@ -1,0 +1,20 @@
+{
+  "name": "wmawslog-js",
+  "version": "1.0.0",
+  "description": "Lib to log AWS Lambda logs on AWS SQS",
+  "main": "index.js",
+  "homepage": "https://github.com/webmotors/wmawslog-js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Rodrigo Alviani",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "aws-sdk": "^2.765.0",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}
