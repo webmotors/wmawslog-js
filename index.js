@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint no-param-reassign: ["error", { "props": false }] */
 const AWS = require('aws-sdk');
 
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05', region: 'us-east-1' });
@@ -60,10 +59,12 @@ const init = (args) => {
     Env = args.env;
   }
 
-  const newLevel = args.level.toLowerCase();
-  if (checkConst([levels, newLevel])) Level = newLevel;
+  if (args.level) {
+    const newLevel = args.level.toLowerCase();
+    if (checkConst([levels, newLevel])) Level = newLevel;
+  }
 
-  if (!args.context.invokedFunctionArn) return ({ err: true, message: 'invalid context' });
+  if (!args.context || !args.context.invokedFunctionArn) return ({ err: true, message: 'invalid context' });
 
   Queue = Queue.replace('{{account_id}}', args.context.invokedFunctionArn.split(':')[4]);
 };

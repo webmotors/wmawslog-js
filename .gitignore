@@ -1,4 +1,7 @@
 node_modules
+.scannerwork
+fixtures
+coverage
 *.log
 .DS_Store
 */**/.DS_Store
