@@ -3,7 +3,7 @@ A simple lib to send logs to AWS SQS from Lambda functions.
 
 ## How to use
 ```js
-const log = require('wmawslog-js');
+const log = require('@webmotors/wmawslog-js');
 
 exports.handler = async (event, context) => {
     // configure
