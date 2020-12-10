@@ -6,10 +6,10 @@ const sqs = new AWS.SQS({ apiVersion: '2012-11-05', region: 'us-east-1' });
 let App = '';
 let Level = 'warn';
 let Env = 'hml';
-let Queue = 'https://sqs.us-east-1.amazonaws.com/{{account_id}}/sqs-log';
+let Queue = '';
 
 const levels = ['fatal', 'error', 'warn', 'info', 'debug', 'trace'];
-const envs = ['hml', 'azl', 'prd'];
+const envs = ['dev', 'hml', 'azl', 'prd'];
 
 const checkConst = (arg) => (arg[0].indexOf(arg[1]) !== -1);
 const messageCleaner = (arg) => {
@@ -31,7 +31,7 @@ const logger = async (args) => {
   if (!newArgs.message) return { err: true, message: 'invalid message' };
   newArgs.message = messageCleaner(newArgs.message);
 
-  if (levels.indexOf(newArgs.level) <= levels.indexOf(Level)) {
+  if (levels.indexOf(newArgs.level) <= levels.indexOf(Level) && Env !== 'dev') {
     const params = {
       MessageBody: JSON.stringify({
         app: App,
@@ -44,6 +44,12 @@ const logger = async (args) => {
     };
 
     return { err: false, message: await sqs.sendMessage(params).promise() };
+  }
+
+  if (Env === 'dev') {
+    // eslint-disable-next-line no-console
+    console.log(newArgs.timestamp, newArgs.message);
+    return { err: false, message: 'dev environment' };
   }
 
   return { err: false, message: 'low level' };
@@ -61,12 +67,16 @@ const init = (args) => {
 
   if (args.level) {
     const newLevel = args.level.toLowerCase();
-    if (checkConst([levels, newLevel])) Level = newLevel;
+    if (checkConst([levels, newLevel])) {
+      Level = newLevel;
+    } else {
+      return ({ err: true, message: 'invalid level' });
+    }
   }
 
-  if (!args.context || !args.context.invokedFunctionArn) return ({ err: true, message: 'invalid context' });
+  if (!args.queue) return ({ err: true, message: 'invalid queue' });
 
-  Queue = Queue.replace('{{account_id}}', args.context.invokedFunctionArn.split(':')[4]);
+  Queue = args.queue;
 };
 
 module.exports = {
